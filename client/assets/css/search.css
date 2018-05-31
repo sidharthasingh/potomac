@@ -1,0 +1,162 @@
+.navbar{
+	border-radius: 0px;
+}
+
+.company_logo{
+	position: absolute;
+	position: fixed;
+	bottom: 20px;
+	right: 20px;
+	z-index: -100;
+}
+
+.panel.panel-horizontal {
+    display:table;
+    width:100%;
+}
+
+.jumbotron{
+	color: #FFF;
+	background-color: rgba(222,102,0,0.8); /*#DE6600;*/
+}
+
+.row{
+	margin-top: 0px;
+}
+
+
+/* layout.css Style */
+.upload-drop-zone {
+  height: 200px;
+  border-width: 2px;
+  margin-bottom: 20px;
+}
+
+/* skin.css Style*/
+.upload-drop-zone {
+  color: #ccc;
+  border-style: dashed;
+  border-color: #ccc;
+  line-height: 200px;
+  text-align: center
+}
+.upload-drop-zone.drop {
+  color: #222;
+  border-color: #222;
+}
+
+.file-preview{
+	position: inline;
+	float: left;
+}
+
+.file-preview-input {
+	padding: 10px;
+    position: relative;
+    overflow: hidden;
+    margin: 10px;
+    margin-left: 0px;    
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;    
+}
+.file-preview-input input[type=file] {
+	position: absolute;
+	top: 0;
+	right: 0;
+	margin: 0;
+	padding: 0;
+	font-size: 20px;
+	cursor: pointer;
+	opacity: 0;
+	filter: alpha(opacity=0);
+}
+.file-preview-input-title {
+    margin-left:2px;
+}
+.file-preview-input input[type=button] {
+	position: absolute;
+	top: 0;
+	right: 0;
+	margin: 0;
+	padding: 0;
+	font-size: 20px;
+	cursor: pointer;
+	opacity: 0;
+	filter: alpha(opacity=0);
+}
+.file-preview-input input[type=submit] {
+	position: absolute;
+	top: 0;
+	right: 0;
+	margin: 0;
+	padding: 0;
+	font-size: 20px;
+	cursor: pointer;
+	opacity: 0;
+	filter: alpha(opacity=0);
+}
+
+.list{
+
+}
+
+.new-line{
+	/*position: relative;*/
+	/*padding-top: 60px;*/
+	margin-left: 20px;
+}
+
+.selection{
+	width: 150px;
+	border: 1px solid transparent;
+	border-color: #CCC;
+	border-radius: 4px;
+	background-color: #FFF;
+	/*background-color: rgba(222,102,0,0.1);*/
+	padding: 20px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.selection_value{
+	width: 200px;
+	border: 1px solid transparent;
+	border-color: #CCC;
+	border-radius: 4px;
+	background-color: #FFF;
+	padding: 10px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.remove{
+	background-color: #F55;
+	border: 1px solid transparent;
+	border-color: #CCC;
+	border-radius: 4px;
+	background-color: #F55;
+	color: #FFF;
+	padding: 10px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.custom_value{
+	width: 200px;
+	border: 1px solid transparent;
+	border-color: #CCC;
+	border-radius: 4px;
+	background-color: #FFF;
+	padding: 10px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.input-message{
+	padding: 20px;
+	padding-bottom: 0px;
+	margin-bottom: 0px;
+	padding-left: 0px;
+	margin-left: 0px;
+}
