@@ -103,7 +103,7 @@
 													<h4 class="title">
 														<?php echo $result["file_name"]; ?>
 													</h4>
-													<p class="summary">Arizona State University, California</p>
+													<p class="summary"><?php echo strtoupper($result["file_type"]); ?></p>
 												</div>
 											</div>
 										</td>
