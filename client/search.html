@@ -4,11 +4,11 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		
-		<title>Search Resumes | Potomac</title>
+		<title>Search Resumé | Potomac</title>
 
 		<link rel="stylesheet" type="text/css" href="client/assets/css/bootstrap.min.css">
 		
-		<link rel="stylesheet" type="text/css" href="client/assets/css/search.css">
+		<link rel="stylesheet" type="text/css" href="client/assets/css/upload.css">
 
 		<script type="text/javascript" src="client/assets/js/jquery-1.11.1.min.js"></script>
 		<script type="text/javascript" src="client/assets/js/bootstrap-3.3.0.min.js"></script>
@@ -44,31 +44,65 @@
 				</div><!-- /.navbar-collapse -->
 			</div><!-- /.container-fluid -->
 		</nav>
-		<div ng-app="upload_form" ng-controller="ctrl">
-			{{hello}}
-			<form action="/search" method="post" enctype="multipart/form-data" id="upload_form">
-				Search Keywords : 
-				<input type="text" placeholder="Keyword 1 Keyword 2 . . ."  name="keywords" id="keywords">
-				<input type="button" value="ADD SEARCH DETAILS" ng-click="add_details()">
+		<div ng-app="upload_form" ng-controller="ctrl" class="container">
+			<div class="row"><br>
+				<div class="jumbotron">
+					<h1>Search Resumé</h1>
+					<p>Search for the resume by entering appropriate keywords and information filters.</p>
+				</div>
+			</div>
+
+			<form action="search" method="post" enctype="multipart/form-data" placeholder="Keyword 1 Keyword 2 . . ." id="upload_form">
+
+				<div class="search_bar">
+					<input type="text" placeholder="Keyword 1 Keyword 2 . . ." name="keywords" id="fileToUpload"/>
+				</div>
+				<div class="input-group file-preview">
+					<div class="btn btn-default file-preview-input"> 
+						<span class="glyphicon glyphicon-plus">
+						</span> 
+						<span class="file-preview-input-title">Add more details</span>
+						<input type="button" value="ADD DETAILS" ng-click="add_details()"/>
+					</div>
+				</div>
+ 				<!-- <input type="button" value="ADD DETAILS" ng-click="add_details()"> -->
 				<input type="hidden" name="no_of_details" value="{{no_of_details}}">
 				<input type="hidden" style="width:700px" name="selection_json" value="{{selection_json}}">
-				<div ng-repeat="list_item in lists">
-					<select form="upload_form" ng-model="list_item.selection" ng-change="updateSelection(list_item.id)">
-						<option value="area_of_practice" >Area of practice</option>
-						<option value="state_of_residency" >State of residency</option>
-						<option value="education" >Education</option>
-						<option value="state_of_bar_membership" >State of bar membership</option>
-						<option value="law_school_graduation_year">Law school graduation year</option>
-					</select>
-					<select ng-change="setValueOfOption(list_item.id)" ng-model="list_item.selection_value">
-						<option ng-repeat="option in list_item.selection_values" value="{{option}}">{{option}}</option>
-					</select>
-					<input type="text" placeholder="Enter a value here." ng-model="list_item.value" ng-change="enter_value(list_item.id)" ng-if="list_item.selection_value == '--OTHER--'">
-					<input type="button" value="REMOVE" ng-click="remove_select_field(list_item.id)">
+
+				<div class="input-group file-preview submit">
+					<div class="btn btn-default file-preview-input"> 
+						<span class="glyphicon glyphicon-search">
+						</span> 
+						<span class="file-preview-input-title">Search</span>
+						<input type="submit" value="Upload File" name="submit"/>
+					</div>
 				</div>
-				<input type="submit" value="Upload Image" name="submit">
+				<!-- <input type="submit" value="Upload Image" name="submit"> -->
+				<div class="input-group file-preview new-line">
+					<div class="input-message" ng-if="lists.length>0">
+						<p>Please fill up additional filter details.</p>
+					</div>
+					<div class="row">
+						<div ng-repeat="list_item in lists" class="list">
+							<select placeholder="Enter" form="upload_form" ng-model="list_item.selection" ng-change="updateSelection(list_item.id)" class="selection">
+								<option value="" disabled selected>Select option</option>
+								<option value="area_of_practice" >Area of practice</option>
+								<option value="state_of_residency" >State of residency</option>
+								<option value="education" >Education</option>
+								<option value="state_of_bar_membership" >State of bar membership</option>
+								<option value="law_school_graduation_year">Law school graduation year</option>
+							</select>
+							<select ng-change="setValueOfOption(list_item.id)" ng-model="list_item.selection_value" class="selection_value">
+								<option ng-repeat="option in list_item.selection_values" value="{{option}}">{{option}}</option>
+							</select>
+							<input type="text" placeholder="Enter a value here." ng-model="list_item.value" ng-change="enter_value(list_item.id)" ng-if="list_item.selection_value == '--OTHER--'" class="custom_value">
+							<input type="button" class="remove" value="&#9986; REMOVE" ng-click="remove_select_field(list_item.id)">
+						</div>
+					</div>
+				</div>
 			</form>
 		</div>
+		<img src="client/assets/images/logo.png" class="company_logo">
 	</body>
 
 	<script type="text/javascript" src="client/assets/js/angular.min.js"></script>
@@ -93,15 +127,19 @@
 			}
 			$scope.remove_select_field = function(id){
 				console.log("Remove select field",id);
-				console.log($scope.lists);
+				// console.log($scope.lists);
 				temp = [];
 				for(i=0; i < $scope.lists.length; i++)
 				{
 					if(i!=id)
+					{
+						if(i>id)
+							$scope.lists[i].id--;
 						temp = temp.concat($scope.lists[i]);
+					}
 				}
 				$scope.lists = temp;
-				// console.log($scope.lists);
+				console.log($scope.lists);
 				$scope.no_of_details--;
 				$scope.updateSelection();
 			}
@@ -238,34 +276,199 @@
 					];
 				case "education":
 					return [
+						"--OTHER--",
 						"Albany Law School of Union University",
+						"American University Washington College of Law",
+						"Appalachian School of Law",
+						"Arizona State University Sandra Day O’Connor College of Law",
+						"Arizona Summit Law School",
+						"Atlanta’s John Marshall Law School",
+						"Ave Maria School of Law",
+						"Barry University Dwayne O. Andreas School of Law",
+						"Baylor University School of Law",
+						"Belmont University College of Law",
 						"Benjamin N Cardozo School of Law",
 						"Berkeley Law",
+						"Boston College Law",
+						"Boston University School of Law",
+						"Brandeis School of Law",
+						"Brigham Young University Law",
+						"Brooklyn Law School",
+						"California Western School of Law",
+						"Campbell University School of Law",
+						"Capital University Law School",
+						"Case Western Reserve University School of Law",
 						"Catholic University, Columbus School of Law",
+						"Chapman University Dale E. Fowler School of Law",
+						"Cleveland Marshall College of Law",
 						"College of William & Mary School of Law",
 						"Columbia Law School",
+						"Concordia University School of Law",
 						"Cornell Law School",
+						"Creighton University School of Law",
+						"Drake University Law School",
+						"Drexel University Thomas R. Kline School of Law",
 						"Duke University School of Law",
-						"Harvard Law School",
-						"Hofstra University School of Law",
+						"Duquesne University School of Law",
+						"Elon University Law",
+						"Emory University School of Law",
+						"Faulkner University School of Law",
+						"Florida Coastal School of Law",
+						"Florida International University School of Law",
+						"Florida State University College of Law",
+						"Florida University College of Law",
 						"Fordham University School of Law",
 						"George Mason University School of Law",
 						"George Washington University Law School",
 						"Georgetown University Law Center",
+						"Georgia State University College of Law",
+						"Golden Gate University College of Law",
+						"Gonzaga University School of Law",
+						"Harvard Law School",
+						"Hofstra University School of Law",
+						"Howard University School of Law",
+						"Illinois Institute of Technology Chicago-Kent College of Law",
+						"Indiana University Bloomington Maurer School of Law",
+						"Indiana University Robert H. McKinney School of Law",
+						"Lewis and Clark Law School",
+						"Liberty University School of Law",
+						"Lincoln Memorial University Duncan School of Law",
+						"Louisiana State University Paul M. Hebert Law Center",
+						"Loyola University Chicago School of Law",
+						"Loyola University New Orleans College of Law",
+						"Marquette University Law School",
+						"Mercer University School of Law",
+						"Michigan State University College of Law",
+						"Mississippi College School of Law",
+						"Mitchell Hamline School of Law in Affiliation with Hamline University",
+						"New York Law School",
 						"New York University School of Law",
+						"North Carolina Central University School of Law",
+						"Northeastern University School of Law",
+						"Northwestern Pritzker School of Law",
+						"Northern Illinois University College of Law",
+						"Northern Kentucky University College of Law",
+						"Nova Southeastern University College of Law",
+						"Ohio Northern University Law School",
+						"Oklahoma City University School of Law",
+						"Pace University School of Law",
+						"Pepperdine University School of Law",
+						"Penn State University Law - University Park",
+						"Penn State University - Dickinson Law",
+						"Quinnipiac University School of Law",
+						"Regent University School of Law",
+						"Roger Williams University School of Law",
+						"Rutgers University Law School",
+						"Saint Louis University School of Law",
+						"Samford University Cumberland School of Law",
 						"Santa Clara University School of Law",
+						"Seattle University School of Law",
+						"Seton Hall University School of Law",
+						"SMU Dedman School of Law",
+						"South Texas College of Law Houston",
+						"Southern Illinois University School of Law",
+						"Southern University Law Center",
+						"Southwestern Law School",
 						"Stanford Law School",
 						"St. John’s University School of Law",
+						"St. Mary’s School of Law",
+						"St. Thomas University School of Law",
+						"Stetson University College of Law",
 						"Suffolk University Law School",
+						"Syracuse University College of Law",
+						"Temple University Beasley School of Law",
+						"Texas A&M University School of Law",
+						"Texas Tech University School of Law",
+						"Thomas Jefferson School of Law",
+						"The Catholic University of America Columbus School of Law",
+						"The City University of New York School of Law",
 						"The George Washington School of Law",
-						"UC Hastings College of Law",
-						"University of California Los Angeles",
+						"The John Marshall Law School",
+						"The Ohio State University Moritz College of Law",
+						"The University of Akron School of Law",
+						"The University of Alabama School of Law",
+						"The University of Arizona James E. Rogers College of Law",
+						"The University of Chicago Law School",
+						"The University of Iowa College of Law",
+						"The University of Kentucky College of Law",
+						"The University of Kansas School of Law",
+						"The University of Memphis Cecil C. Humphreys School of Law",
+						"The University of Mississippi School of Law",
+						"The University of Oklahoma College of Law",
+						"The University of Texas at Austin School of Law",
+						"The University of Toledo College of Law",
+						"The University of Tulsa College of Law",
+						"The University of Utah S.J. Quinney College of Law",
+						"Thurgood Marshall School of Law",
+						"Tourdo College Jacob D. Fuchsberg Law Center",
+						"Tulane University Law School",
+						"UC Berkeley Law",
+						"UC Davis School of Law",
+						"UC Hastings College of The Law",
+						"UF Levin College of Law",
+						"University of Arkansas School of Law",
+						"University of Arkansas at Little Rock William H. Bowen School of Law",
+						"University of Baltimore School of Law",
+						"University at Buffalo School of Law",
+						"University of California Los Angeles Law",
+						"University of California, Irvine School of Law",
+						"University of Cincinnati College of Law",
+						"University of Colorado Boulder Colorado Law",
+						"University of Connecticut School of Law",
+						"University of Dayton School of Law",
+						"University of Denver Sturm College of Law",
+						"University of the District of Columbia David A. Clarke School of Law",
+						"University of Detroit Mercy Law",
 						"University of Florida College of Law",
+						"University of Georgia School of Law",
+						"University of Houston Law Center",
+						"University of Illinois College of Law",
+						"University of La Verne College of Law",
+						"University of Maine School of Law",
+						"University of Maryland Francis King Carey School of Law",
+						"University of Massachusetts School of Law",
+						"University of Miami School of Law",
+						"University of Michigan School of Law",
+						"University of Minnesota Law School",
 						"University of Missouri - Kansas City School of Law",
+						"University of Missouri School of Law",
+						"University of Montana School of Law",
+						"University of Nebraska-Lincoln College of Law",
+						"University of New Hampshire School of Law",
+						"University of North Dakota School of Law",
+						"University of Notre Dame Law School",
+						"University of Oregon School of Law",
+						"University of the Pacific McGeorge School of Law",
 						"University of Pennsylvania Law School",
+						"University of Pittsburgh PittLaw",
 						"University of Richmond School of Law",
+						"University of San Diego School of Law",
+						"University of San Francisco School of Law",
+						"University of South Carolina School of Law",
+						"University of South Dakota School of Law",
+						"University of Tennessee College of Law",
 						"University of Virginia School of Law",
-						"--OTHER--"
+						"University of Washington School of Law",
+						"University of Wisconsin Law School",
+						"UNC School of Law",
+						"UNLV William S. Boyd School of Law",
+						"Valparaiso University Law School",
+						"Vanderbilt Law School",
+						"Vermont Law School",
+						"Villanova University Charles Widger School of Law",
+						"Wake Forest University School of Law",
+						"Washburn University School of Law",
+						"Washington University School of Law",
+						"Wayne State University School of Law",
+						"Western Michigan University Cooley Law School",
+						"Western State College of Law at Argosy University",
+						"Whittier Law School",
+						"Widener University Commonwealth Law School",
+						"Widener University Delaware Law School",
+						"Willamette University Law School",
+						"William & Mary Law School",
+						"Yale Law School",
+						"Yeshiva University Law School"
 					];
 				case "state_of_bar_membership":
 					return [

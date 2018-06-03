@@ -91,8 +91,8 @@
 		}
 	}
 
-	setHeaderToJson();
-	echo json_encode($upload_response);
+	// setHeaderToJson();
+	// echo json_encode($upload_response);
 
 	$meta_count = 0;
 
@@ -146,5 +146,11 @@
 			createTermIdFileIdRelationship($term_id, $file_id);
 		}
 	}
+
+	$upload_error = $upload_response["error"];
+	$upload_message = $upload_response["message"];
+
+	require("client/upload_result.php");
+	exit;
 
 ?>

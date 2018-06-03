@@ -52,7 +52,7 @@
 				$temp = 0;
 			}
 			$all_id = array_unique($all_id);
-			var_dump($all_id);
+			// var_dump($all_id);
 		}
 
 		$file_ids = searchFromKeywords($keywords);

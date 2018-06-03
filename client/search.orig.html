@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		
+		<title>Search Resumes | Potomac</title>
+
+		<link rel="stylesheet" type="text/css" href="client/assets/css/bootstrap.min.css">
+		
+		<link rel="stylesheet" type="text/css" href="client/assets/css/search.css">
+
+		<script type="text/javascript" src="client/assets/js/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" src="client/assets/js/bootstrap-3.3.0.min.js"></script>
+	</head>
+	<body>
+		<nav class="navbar navbar-inverse">
+			<div class="container-fluid">
+				<!-- Brand and toggle get grouped for better mobile display -->
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="/">Potomac Law Group</a>
+				</div>
+				<!-- Collect the nav links, forms, and other content for toggling -->
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+					<ul class="nav navbar-nav navbar-right">
+						<li><a href="/">Home</a></li>
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">More <span class="caret"></span></a>
+							<ul class="dropdown-menu">
+								<li><a href="logout">Logout</a></li>
+								<li><a href="search">Search</a></li>
+								<li role="separator" class="divider"></li>
+								<li><a href="#">Documentation</a></li>
+								<li><a href="#">About</a></li>
+							</ul>
+						</li>
+					</ul>
+				</div><!-- /.navbar-collapse -->
+			</div><!-- /.container-fluid -->
+		</nav>
+		<div ng-app="upload_form" ng-controller="ctrl">
+			{{hello}}
+			<form action="/search" method="post" enctype="multipart/form-data" id="upload_form">
+				Search Keywords : 
+				<input type="text" placeholder="Keyword 1 Keyword 2 . . ."  name="keywords" id="keywords">
+				<input type="button" value="ADD SEARCH DETAILS" ng-click="add_details()">
+				<input type="hidden" name="no_of_details" value="{{no_of_details}}">
+				<input type="hidden" style="width:700px" name="selection_json" value="{{selection_json}}">
+				<div ng-repeat="list_item in lists">
+					<select form="upload_form" ng-model="list_item.selection" ng-change="updateSelection(list_item.id)">
+						<option value="area_of_practice" >Area of practice</option>
+						<option value="state_of_residency" >State of residency</option>
+						<option value="education" >Education</option>
+						<option value="state_of_bar_membership" >State of bar membership</option>
+						<option value="law_school_graduation_year">Law school graduation year</option>
+					</select>
+					<select ng-change="setValueOfOption(list_item.id)" ng-model="list_item.selection_value">
+						<option ng-repeat="option in list_item.selection_values" value="{{option}}">{{option}}</option>
+					</select>
+					<input type="text" placeholder="Enter a value here." ng-model="list_item.value" ng-change="enter_value(list_item.id)" ng-if="list_item.selection_value == '--OTHER--'">
+					<input type="button" value="REMOVE" ng-click="remove_select_field(list_item.id)">
+				</div>
+				<input type="submit" value="Upload Image" name="submit">
+			</form>
+		</div>
+	</body>
+
+	<script type="text/javascript" src="client/assets/js/angular.min.js"></script>
+	<script type="text/javascript">
+		angular.module("upload_form", []).controller("ctrl", function($scope){
+			this.$onInit = function(){
+				$scope.hello = "Angular WOrking";	
+				$scope.no_of_details = 0;
+				$scope.lists = [];
+				$scope.selection_json = JSON.stringify([]);
+			}
+			$scope.add_details = function(){
+				$scope.lists = $scope.lists.concat([{
+						id:$scope.no_of_details,
+						selection:null,
+						value:'',
+						selection_values:[]
+					}]);
+				$scope.no_of_details++;
+				console.log("Add details");
+				$scope.updateSelection();
+			}
+			$scope.remove_select_field = function(id){
+				console.log("Remove select field",id);
+				console.log($scope.lists);
+				temp = [];
+				for(i=0; i < $scope.lists.length; i++)
+				{
+					if(i!=id)
+						temp = temp.concat($scope.lists[i]);
+				}
+				$scope.lists = temp;
+				// console.log($scope.lists);
+				$scope.no_of_details--;
+				$scope.updateSelection();
+			}
+			$scope.updateSelection = function(id){
+				if($scope.lists[id])
+					$scope.lists[id].selection_values = getSelectionValues($scope.lists[id].selection);
+				temp = [];
+				console.log($scope);
+				for(i=0;i<$scope.no_of_details;i++){
+					temp.push({
+						id:$scope.lists[i].id,
+						selection:$scope.lists[i].selection,
+						value:$scope.lists[i].value,
+						// selection_values: ["hello"],
+						selection_value:$scope.lists[i].selection_value
+					})
+				}
+				console.log(temp);
+				$scope.selection_json = JSON.stringify(temp);
+			}
+			$scope.enter_value = function(id){
+				list_item = $scope.lists[id];
+				if(!list_item.selection){
+					console.log("Choose an option first.");
+					$scope.lists[id].value = "";
+				}
+				else{
+					$scope.updateSelection();
+					console.log("Value accepted");
+				}
+			}
+			$scope.setValueOfOption = function(id){
+				console.log("Set value of option");
+				if(!$scope.lists[id].selection){
+					console.log("Choos an option first");
+				}
+				$scope.updateSelection();
+			}
+		});
+
+		function getSelectionValues(str){
+			switch(str){
+				case "area_of_practice":
+					return [
+					"ADMINISTRATIVE LAW AND REGULATORY PRACTICE",
+					"ADVERTISING",
+					"MARKETING AND SOCIAL MEDIA",
+					"ANTITRUST AND COMPETITION LAW",
+					"APPELLATE & CRITICAL MOTIONS",
+					"ARBITRATION",
+					"ASSISTED REPRODUCTIVE TECHNOLOGY",
+					"COMMUNICATIONS, MEDIA, AND ENTERTAINMENT",
+					"CONSUMER PRODUCT SAFETY AND STEWARDSHIP",
+					"CORPORATE",
+					"EDUCATION",
+					"EMPLOYEE BENEFITS AND EXECUTIVE COMPENSATION",
+					"EMPLOYMENT AND HUMAN RESOURCES",
+					"FOOD AND DRUG",
+					"GENERAL COUNSEL SERVICES",
+					"GOVERNMENT CONTRACTS",
+					"GOVERNMENT RELATIONS AND PUBLIC POLICY",
+					"HEALTH CARE",
+					"IMMIGRATION",
+					"INTELLECTUAL PROPERTY",
+					"INTERNATIONAL",
+					"INTERNATIONAL TRADE AND CUSTOMS",
+					"LIFE SCIENCES",
+					"LITIGATION",
+					"MUNICIPAL LAW",
+					"NONPROFIT AND TAX-EXEMPT ORGANIZATIONS",
+					"PATENT",
+					"POSTAL",
+					"PRIVACY AND CYBERSECURITY",
+					"REAL ESTATE AND FINANCE",
+					"RESTAURANT, WINE, BEER, AND SPIRITS PRACTICE",
+					"TAXATION",
+					"TECHNOLOGY AND IP TRANSACTIONS",
+					"WHITE COLLAR DEFENSE AND INVESTIGATIONS",
+					"--OTHER--"
+					];
+				case "state_of_residency":
+					return [
+						"Alabama",
+						"Alaska",
+						"Arizona",
+						"Arkansas",
+						"California",
+						"Colorado",
+						"Connecticut",
+						"Delaware",
+						"Florida",
+						"Georgia",
+						"Hawaii",
+						"Idaho",
+						"Illinois",
+						"Indiana",
+						"Iowa",
+						"Kansas",
+						"Kentucky",
+						"Louisiana",
+						"Maine",
+						"Maryland",
+						"Massachusetts",
+						"Michigan",
+						"Minnesota",
+						"Mississippi",
+						"Missouri",
+						"Montana",
+						"Nebraska",
+						"Nevada",
+						"New Hampshire",
+						"New Jersey",
+						"New Mexico",
+						"New York",
+						"North Carolina",
+						"North Dakota",
+						"Ohio",
+						"Oklahoma",
+						"Oregon",
+						"Pennsylvania",
+						"Rhode Island",
+						"South Carolina",
+						"South Dakota",
+						"Tennessee",
+						"Texas",
+						"Utah",
+						"Vermont",
+						"Virginia",
+						"Washington",
+						"West Virginia",
+						"Wisconsin",
+						"Wyoming",
+						"--OTHER--"
+					];
+				case "education":
+					return [
+						"Albany Law School of Union University",
+						"Benjamin N Cardozo School of Law",
+						"Berkeley Law",
+						"Catholic University, Columbus School of Law",
+						"College of William & Mary School of Law",
+						"Columbia Law School",
+						"Cornell Law School",
+						"Duke University School of Law",
+						"Harvard Law School",
+						"Hofstra University School of Law",
+						"Fordham University School of Law",
+						"George Mason University School of Law",
+						"George Washington University Law School",
+						"Georgetown University Law Center",
+						"New York University School of Law",
+						"Santa Clara University School of Law",
+						"Stanford Law School",
+						"St. John’s University School of Law",
+						"Suffolk University Law School",
+						"The George Washington School of Law",
+						"UC Hastings College of Law",
+						"University of California Los Angeles",
+						"University of Florida College of Law",
+						"University of Missouri - Kansas City School of Law",
+						"University of Pennsylvania Law School",
+						"University of Richmond School of Law",
+						"University of Virginia School of Law",
+						"--OTHER--"
+					];
+				case "state_of_bar_membership":
+					return [
+						"Alabama",
+						"Alaska",
+						"Arizona",
+						"Arkansas",
+						"California",
+						"Colorado",
+						"Connecticut",
+						"Delaware",
+						"Florida",
+						"Georgia",
+						"Hawaii",
+						"Idaho",
+						"Illinois",
+						"Indiana",
+						"Iowa",
+						"Kansas",
+						"Kentucky",
+						"Louisiana",
+						"Maine",
+						"Maryland",
+						"Massachusetts",
+						"Michigan",
+						"Minnesota",
+						"Mississippi",
+						"Missouri",
+						"Montana",
+						"Nebraska",
+						"Nevada",
+						"New Hampshire",
+						"New Jersey",
+						"New Mexico",
+						"New York",
+						"North Carolina",
+						"North Dakota",
+						"Ohio",
+						"Oklahoma",
+						"Oregon",
+						"Pennsylvania",
+						"Rhode Island",
+						"South Carolina",
+						"South Dakota",
+						"Tennessee",
+						"Texas",
+						"Utah",
+						"Vermont",
+						"Virginia",
+						"Washington",
+						"West Virginia",
+						"Wisconsin",
+						"Wyoming",
+						"--OTHER--"
+					];
+				case "law_school_graduation_year":
+					return ["1930","1931","1932","1933","1934","1935","1936","1937","1938","1939","1940","1941","1942","1943","1944","1945","1946","1947","1948","1949","1950","1951","1952","1953","1954","1955","1956","1957","1958","1959","1960","1961","1962","1963","1964","1965","1966","1967","1968","1969","1970","1971","1972","1973","1974","1975","1976","1977","1978","1979","1980","1981","1982","1983","1984","1985","1986","1987","1988","1989","1990","1991","1992","1993","1994","1995","1996","1997","1998","1999","2000","2001","2002","2003","2004","2005","2006","2007","2008","2009","2010","2011","2012","2013","2014","2015","2016","2017","2018","--OTHER--"];
+			}
+			return [];
+		}
+	</script>
+</html>

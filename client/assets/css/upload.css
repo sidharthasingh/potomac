@@ -160,3 +160,18 @@
 	padding-left: 0px;
 	margin-left: 0px;
 }
+
+.search_bar{
+	width: 100%;
+	align-items: center;
+	align-content: center;
+}
+
+.search_bar input{
+	width: 50%;
+	height: 40px;
+	/*border: 2px solid transparent;*/
+	border-radius: 4px;
+	padding: 20px;
+	border-width: 1px;
+}
