@@ -25,7 +25,8 @@
 			return false;
 		}
 		else{
-			$row = $potodb->get_row("select * from file_meta where meta_key='$meta_key' AND file_id=$file_id;");
+			$str = "select * from file_meta where meta_key='$meta_key' AND file_id=$file_id;";
+			$row = $potodb->get_row($str);
 			if(is_array($row)){
 				return $row;
 			}
@@ -42,7 +43,7 @@
 				return $potodb -> insertValue("file_meta",[
 					"file_id" => $file_id,
 					"meta_key" => strtoupper($meta_key),
-					"meta_value" => strtoupper($meta_value)
+					"meta_value" => $meta_value
 				]);
 			}
 			else{

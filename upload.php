@@ -80,6 +80,7 @@
 				setFileMeta($file_id, "file_name", $name_of_file);
 				setFileMeta($file_id, "file_location", $target_dir);
 				setFileMeta($file_id, "file_full_path", $target_file);
+				setFileMeta($file_id, "date_added", date("Y-M-D"));
 				$upload_response["file_id"] = $file_id;
 			}
 		} 
